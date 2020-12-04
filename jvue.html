@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joker write vue</title>
+</head>
+
+<body>
+    <div id="app">
+        <p>{{counter}}</p>
+        <p j-text="counter"></p>
+        <p j-html="desc"></p>
+    </div>
+
+    <script src="jvue.js"></script>
+    <script src="compile.js"></script>
+    <script>
+        const app = new JVue({
+            el: "#app",
+            data: {
+                counter: 1,
+                desc: '<span>啊啊</span>'
+            }
+        })
+        setInterval(() => {
+            app.counter++
+        }, 1000);     
+    </script>
+
+</body>
+
+</html>
