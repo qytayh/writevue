@@ -16,7 +16,7 @@ function defineReactive(obj,key,val){
                 console.log('set '+key+': '+newVal)
                 observe(newVal)
                 val = newVal
-                
+                watchers.forEach(w => w.update())
             }
         }
     })
@@ -34,6 +34,7 @@ function observe(obj){
 
 //代理函数，方便用户直接访问$data中的数据
 function proxy(vm,sourceKey){
+    // 将$data的值代理到vm上
     Object.keys(vm[sourceKey]).forEach(key=>{
         Object.defineProperty(vm,key,{
             get(){
@@ -77,5 +78,20 @@ class Observer {
         Object.keys(obj).forEach(key=>{
             defineReactive(obj,key,obj[key])
         })
+    }
+}
+
+//创建观察者 保存更新函数  值发生变化调用更新函数
+const watchers = []
+
+class Watcher{
+    constructor(vm,key,updateFn){
+        this.vm=vm
+        this.key=key
+        this.updateFn=updateFn
+        watchers.push(this)
+    }
+    update() {
+        this.updateFn.call(this.vm,this.vm[this.key])
     }
 }

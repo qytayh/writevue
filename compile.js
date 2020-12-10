@@ -13,7 +13,6 @@ class Complier{
         const childNodes=el.childNodes;
         Array.from(childNodes).forEach(node=>{
             if(this.isElement(node)){
-                console.log("nd",node)
                 this.complieElement(node)
             }else if(this.isInter(node)){
                 this.compileText(node)
@@ -34,11 +33,11 @@ class Complier{
         //遍历其属性列表
         const nodeAttrs = node.attributes
         Array.from(nodeAttrs).forEach(attr=>{
-            console.log(attr.name,attr.value,'attr')
+            //规定  指令以j-xx="zzzz" 定义 
             const attrName = attr.name
             const exp = attr.value 
             if(this.isDirective(attrName)){
-                const dir = attrName.substring(2)
+                const dir = attrName.substring(2)  //获取xx
                 this[dir]&&this[dir](node, exp) //存在this[dir]就执行
             }
         })
@@ -49,14 +48,22 @@ class Complier{
     }
 
     isDirective(attr){
+        //判断是否为指令
         return attr.indexOf('j-')===0
     }
 
     update(node,exp,dir){
+        //指令对应的更新函数为  xxUpdater
         const fn = this[dir+'Updater']
         fn && fn(node,this.$vm[exp])
+
+        // 更新处理  封装一个更新函数，可以更新对应dom元素
+        new Watcher(this.$vm,exp,function(val){
+            fn && fn(node,val)
+        })
     }
     
+    // j-text
     text(node, exp) {
         this.update(node, exp, 'text')
     }
@@ -65,6 +72,7 @@ class Complier{
         node.textContent = value
     }
 
+    // j-html
     html(node,exp){
         this.update(node, exp, 'html')
     }
