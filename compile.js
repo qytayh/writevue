@@ -24,8 +24,10 @@ class Complier{
     }
     isElement(node){
         return node.nodeType===1
+        //判断是不是标签
     }
     isInter(node){
+        //判断是不是  {{xxx}} 的文本
         return node.nodeType===3 && /\{\{(.*)\}\}/.test(node.textContent)
     }
     complieElement(node){
@@ -59,6 +61,7 @@ class Complier{
 
         // 更新处理  封装一个更新函数，可以更新对应dom元素
         new Watcher(this.$vm,exp,function(val){
+            console.log(val)
             fn && fn(node,val)
         })
     }
